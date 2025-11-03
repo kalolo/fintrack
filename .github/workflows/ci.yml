@@ -26,12 +26,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5433
+          - 5432:5432
 
     strategy:
       matrix:
-        elixir_version: ["1.16.1"]
-        otp_version: ["26.2"]
+        elixir_version: ["1.17.3"]
+        otp_version: ["27.1"]
 
     steps:
       - name: Checkout code
@@ -83,16 +83,19 @@ jobs:
           mix ecto.create
           mix ecto.migrate
         env:
+          POSTGRES_PORT: 5432
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
 
       - name: Run tests
         run: mix test
         env:
+          POSTGRES_PORT: 5432
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
 
       - name: Run precommit checks
         run: mix precommit
         env:
+          POSTGRES_PORT: 5432
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
 
   assets:
@@ -106,8 +109,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: "1.16.1"
-          otp-version: "26.2"
+          elixir-version: "1.17.3"
+          otp-version: "27.1"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -120,11 +123,22 @@ jobs:
           path: deps
           key: ${{ runner.os }}-mix-deps-${{ hashFiles('**/mix.lock') }}
 
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: assets/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Elixir dependencies
         run: mix deps.get
 
       - name: Install and setup assets
         run: mix assets.setup
+
+      - name: Install Node.js dependencies
+        run: cd assets && npm install
 
       - name: Build assets
         run: mix assets.build
@@ -157,8 +171,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: "1.16.1"
-          otp-version: "26.2"
+          elixir-version: "1.17.3"
+          otp-version: "27.1"
 
       - name: Install dependencies
         run: mix deps.get
