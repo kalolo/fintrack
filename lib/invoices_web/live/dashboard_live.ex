@@ -13,7 +13,7 @@ defmodule InvoicesWeb.DashboardLive do
         📊 Financial Dashboard
         <:subtitle>Overview of your income and expenses</:subtitle>
       </.header>
-
+      
     <!-- Date Range Picker -->
       <div class="mb-6 p-4 bg-white rounded-lg shadow">
         <form
@@ -68,7 +68,7 @@ defmodule InvoicesWeb.DashboardLive do
           <% end %>
         </form>
       </div>
-
+      
     <!-- Key Metrics Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div class="bg-green-50 p-6 rounded-lg shadow">
@@ -147,7 +147,7 @@ defmodule InvoicesWeb.DashboardLive do
           </div>
         </div>
       </div>
-
+      
     <!-- Payment Method Totals -->
       <%= if not Enum.empty?(@dashboard_data.payment_method_breakdown) do %>
         <div class="mb-6">
@@ -184,7 +184,7 @@ defmodule InvoicesWeb.DashboardLive do
           </div>
         </div>
       <% end %>
-
+      
     <!-- Charts Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Income vs Expenses Line Chart -->
@@ -200,7 +200,7 @@ defmodule InvoicesWeb.DashboardLive do
             </canvas>
           </div>
         </div>
-
+        
     <!-- Monthly Comparison Bar Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Comparison</h3>
@@ -214,7 +214,7 @@ defmodule InvoicesWeb.DashboardLive do
             </canvas>
           </div>
         </div>
-
+        
     <!-- Income/Expense Ratio Pie Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Income vs Expense Ratio</h3>
@@ -228,7 +228,7 @@ defmodule InvoicesWeb.DashboardLive do
             </canvas>
           </div>
         </div>
-
+        
     <!-- Payment Method Breakdown Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Transactions by Payment Method</h3>
@@ -242,7 +242,7 @@ defmodule InvoicesWeb.DashboardLive do
             </canvas>
           </div>
         </div>
-
+        
     <!-- Cumulative Cash Flow Area Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Cumulative Cash Flow</h3>
@@ -256,7 +256,7 @@ defmodule InvoicesWeb.DashboardLive do
             </canvas>
           </div>
         </div>
-
+        
     <!-- Net Profit Per Month Line Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Net Profit Per Month</h3>
@@ -271,7 +271,7 @@ defmodule InvoicesWeb.DashboardLive do
           </div>
         </div>
       </div>
-
+      
     <!-- Transaction Summary Table -->
       <div class="bg-white rounded-lg shadow mb-6">
         <div class="px-6 py-4 border-b border-gray-200">
@@ -300,7 +300,7 @@ defmodule InvoicesWeb.DashboardLive do
           </div>
         </div>
       </div>
-    <!-- All-Time Monthly Summary Table -->
+      <!-- All-Time Monthly Summary Table -->
       <div class="bg-white rounded-lg shadow">
         <div class="px-6 py-4 border-b border-gray-200">
           <h3 class="text-lg font-semibold text-gray-900">All-Time Monthly Performance</h3>
@@ -414,7 +414,7 @@ defmodule InvoicesWeb.DashboardLive do
           |> assign(:date_to, Date.to_string(date_to))
           |> load_dashboard_data(date_from, date_to)
 
-          "previousmonth" ->
+        "previousmonth" ->
           date_to = Date.beginning_of_month(Date.utc_today()) |> Date.add(-1)
           date_from = Date.beginning_of_month(date_to)
 

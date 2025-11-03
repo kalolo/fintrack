@@ -260,7 +260,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
           </div>
         </div>
       </div>
-
+      
     <!-- Investments Comparison Chart -->
       <%= if not Enum.empty?(@investments) do %>
         <div class="mt-7 bg-white p-4 md:p-6 rounded-lg shadow">
@@ -367,15 +367,18 @@ defmodule InvoicesWeb.InvestmentLive.Index do
                   </td>
                 </tr>
               <% end %>
-              <% total_previous_value = @investments
+              <% total_previous_value =
+                @investments
                 |> Enum.filter(&(length(&1.value_captures) > 0))
                 |> Enum.map(&Invoices.Investments.Investment.previous_value(&1))
                 |> Enum.reduce(0, &(&1 + &2)) %>
-              <% total_latest_value = @investments
+              <% total_latest_value =
+                @investments
                 |> Enum.filter(&(length(&1.value_captures) > 0))
                 |> Enum.map(&Invoices.Investments.Investment.latest_value(&1))
                 |> Enum.reduce(0, &(&1 + &2)) %>
-              <% total_change = @investments
+              <% total_change =
+                @investments
                 |> Enum.filter(&(length(&1.value_captures) > 0))
                 |> Enum.map(fn inv ->
                   previous = Invoices.Investments.Investment.previous_value(inv)
@@ -402,7 +405,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
             </tbody>
           </table>
         </div>
-
+        
     <!-- Changes by Date Table -->
         <%= if not Enum.empty?(@investments) do %>
           <% changes_by_date = calculate_changes_by_date(@investments) %>
@@ -445,7 +448,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
             </div>
           <% end %>
         <% end %>
-
+        
     <!-- Mobile Card View -->
         <div class="md:hidden space-y-4">
           <%= for inv <- @investments do %>
@@ -551,7 +554,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
                   <p class="text-sm text-gray-600">Record the current value of your investment</p>
                 </div>
               </div>
-
+              
     <!-- Form Section -->
               <div class="bg-gray-50 rounded-lg p-4">
                 <.form for={@value_capture_form} phx-submit="add_value_capture" class="space-y-4">
@@ -573,7 +576,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
                       placeholder="Enter current value"
                     />
                   </div>
-
+                  
     <!-- Action Buttons -->
                   <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
                     <.button
@@ -805,7 +808,7 @@ defmodule InvoicesWeb.InvestmentLive.Index do
                       </tbody>
                     </table>
                   </div>
-
+                  
     <!-- Mobile card view -->
                   <div class="md:hidden space-y-3 max-h-96 overflow-y-auto">
                     <%= for {vc, index} <- @value_captures |> Enum.with_index() do %>

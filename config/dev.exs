@@ -24,7 +24,8 @@ config :invoices, InvoicesWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: System.get_env("SECRET_KEY_BASE") || "dev_secret_key_base_min_64_chars_CHANGEME",
+  secret_key_base:
+    System.get_env("SECRET_KEY_BASE") || "dev_secret_key_base_min_64_chars_CHANGEME",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:invoices, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:invoices, ~w(--watch)]}
