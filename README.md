@@ -143,6 +143,11 @@ Ensure you have the following installed on your system:
    cd assets && npm install && cd ..
    ```
 
+   **Note:** If your PostgreSQL runs on a non-standard port (e.g., 5433), set the environment variable:
+   ```bash
+   export POSTGRES_PORT=5433
+   ```
+
 4. **Load environment variables and start the Phoenix server**
    ```bash
    # Load environment variables
