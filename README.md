@@ -1,30 +1,34 @@
-# Invoice Management System
+# FinTrack
 
-A modern web application built with Phoenix LiveView for managing invoices, tracking transactions, and monitoring financial performance through interactive dashboards and analytics.
+A modern financial management application built with Phoenix LiveView for managing invoices, tracking transactions and investments, and monitoring financial performance through interactive dashboards and analytics.
 
 ## Features
 
 - **Invoice Management**: Create, edit, delete, and track invoices with automatic invoice number generation
-- **Transaction Tracking**: Monitor income and expense transactions with detailed categorization
+- **Transaction Tracking**: Monitor income and expense transactions with detailed categorization and payment method tracking
+- **Investment Tracking**: Monitor and track investment portfolios with value capture over time
 - **Financial Dashboard**: Interactive charts and metrics for analyzing financial performance including:
   - Income vs Expense tracking over time
   - Monthly comparison charts
   - Profit margin calculations
   - Cumulative cash flow visualization
   - Income/Expense ratio analysis
-- **User Authentication**: Secure user registration and login system with bcrypt encryption
+  - Payment method breakdown and analysis
+  - All-time monthly performance summary table
+- **User Authentication**: Secure user registration and login system with bcrypt password hashing
 - **Data Import/Export**: Excel file support for importing historical data and PDF export for professional invoices
-- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
+- **Responsive Design**: Mobile-friendly interface with Tailwind CSS v4
 - **Real-time Updates**: Phoenix LiveView provides instant UI updates without page refreshes
 - **Pagination & Sorting**: Efficient data handling for large datasets
 
 ## Tech Stack
 
 ### Core Framework
-- **Phoenix Framework v1.8**: Modern web framework for Elixir
+- **Phoenix Framework v1.8.1**: Modern web framework for Elixir
 - **Phoenix LiveView v1.1**: Real-time, interactive web applications
 - **Elixir v1.15+**: Functional programming language built on the Erlang VM
 - **Ecto v3.13**: Database wrapper and query generator for Elixir
+- **Bandit v1.5**: HTTP server built on Thousand Island
 
 ### Database & Storage
 - **PostgreSQL**: Primary database for data persistence
@@ -37,17 +41,18 @@ A modern web application built with Phoenix LiveView for managing invoices, trac
 - **esbuild**: Fast JavaScript bundler
 
 ### Authentication & Security
-- **bcrypt_elixir**: Secure password hashing
+- **bcrypt_elixir v3.0**: Secure password hashing with bcrypt algorithm
 - **Phoenix Authentication**: Built-in user session management
+- **Environment-based Secrets**: Secure configuration management via environment variables
 
 ### File Processing
-- **ChromicPDF**: Professional PDF generation for invoices
-- **elixlsx**: Excel file generation for exports  
-- **xlsxir**: Excel file reading for imports
+- **ChromicPDF v1.15**: Professional PDF generation for invoices
+- **elixlsx v0.6**: Excel file generation for exports
+- **xlsxir v1.6**: Excel file reading for imports
 
 ### HTTP & External Services
-- **Req**: Modern HTTP client for external API calls
-- **Swoosh**: Email composition and delivery library
+- **Req v0.5**: Modern HTTP client for external API calls (preferred over HTTPoison/Tesla)
+- **Swoosh v1.16**: Email composition and delivery library
 
 ### Development & Testing
 - **Phoenix Live Dashboard**: Development and monitoring tools
@@ -94,16 +99,17 @@ Ensure you have the following installed on your system:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd invoices
+   git clone https://github.com/YOUR_USERNAME/fintrack.git
+   cd fintrack
    ```
 
 2. **Set up environment variables**
    ```bash
-   cp .env.example .env
+   cp .env.example .env.dev
+   # Or for production: cp .env.example .env
    ```
-   
-   Edit `.env` with your actual invoice configuration:
+
+   Edit `.env.dev` (or `.env`) with your actual invoice configuration:
    ```env
    # Client Information
    CLIENT_NAME=Your Company Name
@@ -129,17 +135,21 @@ Ensure you have the following installed on your system:
    - Install and setup frontend assets (`mix assets.setup`)
    - Build initial assets (`mix assets.build`)
 
-4. **Start the Phoenix server**
+4. **Load environment variables and start the Phoenix server**
    ```bash
+   # Load environment variables
+   source .env.dev
+
+   # Start the server
    mix phx.server
    ```
-   
+
    Or start with an interactive Elixir shell:
    ```bash
-   iex -S mix phx.server
+   source .env.dev && iex -S mix phx.server
    ```
 
-4. **Access the application**
+5. **Access the application**
    
    Open your browser and visit: [`http://localhost:4000`](http://localhost:4000)
 
@@ -158,9 +168,12 @@ Ensure you have the following installed on your system:
 
 The application includes several custom tasks:
 
-- **Create a new user**: `mix invoices.create_user`
-- **Import historical data**: `mix invoices.import_historical`
-- **Fix amount data**: `mix invoices.fix_amounts`
+- **Create a new user**: `mix invoices.create_user EMAIL PASSWORD`
+  ```bash
+  mix invoices.create_user user@example.com mypassword123
+  ```
+
+For other available custom tasks, check the `lib/mix/tasks/` directory.
 
 ## Environment Configuration
 
@@ -168,11 +181,15 @@ The application uses environment variables for sensitive configuration data to p
 
 ### Configuration Files
 
-- **`.env`** - Local environment variables (git-ignored)
-- **`.env.example`** - Template for environment variables
+- **`.env.dev`** - Development environment variables (git-ignored, you must create this)
+- **`.env`** - Production environment variables (git-ignored)
+- **`.env.example`** - Template for environment variables (safe to commit)
 - **`config/runtime.exs`** - Runtime configuration that reads from environment variables
 - **`config/dev.exs`** - Development-specific configuration
 - **`config/prod.exs`** - Production configuration
+- **`config/test.exs`** - Test configuration
+
+**Important:** Never commit `.env` or `.env.dev` files. Only `.env.example` should be in version control.
 
 ### Invoice Configuration
 
@@ -214,17 +231,20 @@ export BILL_TO_BANK_ADDRESS="Bank Address"
 ```
 lib/
 ├── invoices/                    # Core business logic
-│   ├── accounts/               # User management
+│   ├── accounts/               # User management and authentication
 │   ├── billing/                # Invoices and transactions
+│   ├── investments/            # Investment tracking
 │   ├── application.ex          # OTP application
+│   ├── mailer.ex               # Email functionality
 │   └── repo.ex                 # Database repository
-├── invoices_web/               # Web interface layer  
+├── invoices_web/               # Web interface layer
 │   ├── components/             # Reusable UI components
 │   ├── controllers/            # HTTP controllers
 │   ├── live/                   # LiveView modules
 │   │   ├── auth_live/          # Authentication pages
-│   │   ├── dashboard_live.ex   # Financial dashboard
+│   │   ├── dashboard_live.ex   # Financial dashboard with analytics
 │   │   ├── invoice_live/       # Invoice management
+│   │   ├── investment_live/    # Investment tracking
 │   │   └── transaction_live/   # Transaction management
 │   └── router.ex               # URL routing
 ├── mix/tasks/                  # Custom Mix tasks
@@ -237,19 +257,24 @@ assets/                         # Frontend assets (CSS, JS)
 
 ## Database Schema
 
-The application uses three main entities:
+The application uses the following main entities:
 
-- **Users**: Authentication and user management
-- **Invoices**: Invoice records with amounts, dates, and descriptions  
-- **Transactions**: Financial transactions (income/expense) with timestamps
+- **Users**: Authentication and user management with bcrypt password hashing
+- **Invoices**: Invoice records with amounts, dates, and descriptions
+- **Transactions**: Financial transactions (income/expense) with payment methods and timestamps
+- **Investments**: Investment portfolio tracking
+- **Value Captures**: Time-series tracking of investment values
 
 ## Configuration
 
 Key configuration files:
 - `config/config.exs` - General application config
+- `config/runtime.exs` - Runtime config (loads environment variables)
 - `config/dev.exs` - Development environment
-- `config/prod.exs` - Production environment  
+- `config/prod.exs` - Production environment
 - `config/test.exs` - Test environment
+
+See the [Environment Configuration](#environment-configuration) section for details on setting up environment variables.
 
 ## Debugging & Troubleshooting
 
@@ -329,12 +354,21 @@ For production deployment:
 3. Run database migrations in production
 4. Start the application with `mix phx.server`
 
+## Security
+
+This project follows security best practices:
+- All sensitive data is stored in environment variables
+- Passwords are hashed with bcrypt
+- No credentials are committed to version control
+- See [SECURITY.md](SECURITY.md) for detailed security guidelines
+
 ## Contributing
 
-1. Run `mix precommit` before submitting changes
+1. Run `mix precommit` before submitting changes (runs compile with warnings as errors, format check, and tests)
 2. Ensure all tests pass with `mix test`
 3. Follow Elixir and Phoenix coding conventions
 4. Add tests for new functionality
+5. Never commit `.env` or `.env.dev` files - only `.env.example` should be in git
 
 ## Learn More About Phoenix
 
