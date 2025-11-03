@@ -64,7 +64,9 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#transactions-#{transaction.id} a[href='/transactions/#{transaction.id}/edit']")
+               |> element(
+                 "#transactions-#{transaction.id} a[href='/transactions/#{transaction.id}/edit']"
+               )
                |> render_click()
                |> follow_redirect(conn, ~p"/transactions/#{transaction}/edit")
 
