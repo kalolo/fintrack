@@ -8,12 +8,22 @@ defmodule Invoices.BillingFixtures do
   """
 
   alias Invoices.Billing
+  import Invoices.AccountsFixtures
 
   @doc """
   Generate a transaction.
+  If no user_id is provided, creates a new user.
   """
   def transaction_fixture(attrs \\ %{}) do
-    user_id = Map.get(attrs, "user_id", Map.get(attrs, :user_id, 1))
+    user_id =
+      case Map.get(attrs, "user_id") || Map.get(attrs, :user_id) do
+        nil ->
+          user = user_fixture()
+          user.id
+
+        id ->
+          id
+      end
 
     params =
       attrs

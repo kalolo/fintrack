@@ -6,31 +6,31 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
   @create_attrs %{
     timestamp: "2025-09-08T21:25:00",
-    type: "some type",
+    type: "income",
     description: "some description",
     amount: "120.5"
   }
   @update_attrs %{
     timestamp: "2025-09-09T21:25:00",
-    type: "some updated type",
+    type: "expense",
     description: "some updated description",
     amount: "456.7"
   }
-  @invalid_attrs %{timestamp: nil, type: nil, description: nil, amount: nil}
-  defp create_transaction(_) do
-    transaction = transaction_fixture()
+  @invalid_attrs %{timestamp: nil, type: "income", description: nil, amount: nil}
 
+  defp create_transaction(%{user: user}) do
+    transaction = transaction_fixture(%{user_id: user.id})
     %{transaction: transaction}
   end
 
   describe "Index" do
-    setup [:create_transaction]
+    setup [:register_and_log_in_user, :create_transaction]
 
     test "lists all transactions", %{conn: conn, transaction: transaction} do
       {:ok, _index_live, html} = live(conn, ~p"/transactions")
 
-      assert html =~ "Listing Transactions"
-      assert html =~ transaction.type
+      assert html =~ "Transactions"
+      assert html =~ transaction.description
     end
 
     test "saves new transaction", %{conn: conn} do
@@ -56,7 +56,7 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
       html = render(index_live)
       assert html =~ "Transaction created successfully"
-      assert html =~ "some type"
+      assert html =~ "some description"
     end
 
     test "updates transaction in listing", %{conn: conn, transaction: transaction} do
@@ -64,7 +64,7 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#transactions-#{transaction.id} a", "Edit")
+               |> element("#transactions-#{transaction.id} a[href='/transactions/#{transaction.id}/edit']")
                |> render_click()
                |> follow_redirect(conn, ~p"/transactions/#{transaction}/edit")
 
@@ -82,14 +82,14 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
       html = render(index_live)
       assert html =~ "Transaction updated successfully"
-      assert html =~ "some updated type"
+      assert html =~ "some updated description"
     end
 
     test "deletes transaction in listing", %{conn: conn, transaction: transaction} do
       {:ok, index_live, _html} = live(conn, ~p"/transactions")
 
       assert index_live
-             |> element("#transactions-#{transaction.id} a", "Delete")
+             |> element("#transactions-#{transaction.id} a[phx-click*='delete']")
              |> render_click()
 
       refute has_element?(index_live, "#transactions-#{transaction.id}")
@@ -97,13 +97,13 @@ defmodule InvoicesWeb.TransactionLiveTest do
   end
 
   describe "Show" do
-    setup [:create_transaction]
+    setup [:register_and_log_in_user, :create_transaction]
 
     test "displays transaction", %{conn: conn, transaction: transaction} do
       {:ok, _show_live, html} = live(conn, ~p"/transactions/#{transaction}")
 
-      assert html =~ "Show Transaction"
-      assert html =~ transaction.type
+      assert html =~ "Transaction Details"
+      assert html =~ transaction.description
     end
 
     test "updates transaction and returns to show", %{conn: conn, transaction: transaction} do
@@ -129,7 +129,7 @@ defmodule InvoicesWeb.TransactionLiveTest do
 
       html = render(show_live)
       assert html =~ "Transaction updated successfully"
-      assert html =~ "some updated type"
+      assert html =~ "some updated description"
     end
   end
 end
