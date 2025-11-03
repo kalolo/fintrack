@@ -1,0 +1,93 @@
+<Layouts.app flash={@flash} current_user={@current_user}>
+  <.header>
+    Invoice {@invoice.invoice_number}
+    <:subtitle>Created on {@invoice.date}</:subtitle>
+    <:actions>
+      <.button phx-click="generate_pdf" phx-value-id={@invoice.id}>
+        Export to PDF
+      </.button>
+      <.link navigate={~p"/"}>
+        <.button>Back to invoices</.button>
+      </.link>
+    </:actions>
+  </.header>
+  
+<!-- Invoice Preview matching the PDF design -->
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">SERVICE INVOICE</h1>
+    </div>
+    
+<!-- Invoice Number and Date -->
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class="bg-teal-600 text-white p-3 rounded">
+        <div class="text-sm font-medium">INVOICE NO.</div>
+        <div class="text-lg font-bold">{@invoice.invoice_number}</div>
+      </div>
+      <div class="bg-teal-600 text-white p-3 rounded">
+        <div class="text-sm font-medium">DATE</div>
+        <div class="text-lg font-bold">{Calendar.strftime(@invoice.date, "%-d/%-m/%Y")}</div>
+      </div>
+    </div>
+    
+<!-- Client and Bill To sections -->
+    <div class="grid grid-cols-2 gap-8 mb-8">
+      <!-- Client -->
+      <div>
+        <div class="bg-teal-600 text-white p-2 mb-2">
+          <h3 class="font-bold text-sm">CLIENT</h3>
+        </div>
+        <div class="space-y-1 text-sm">
+          <div><span class="font-medium">Name</span> {@client_info.name}</div>
+          <div><span class="font-medium">Address</span> {@client_info.address}</div>
+          <div>{@client_info.city_state_zip}</div>
+          <div><span class="font-medium">EIN</span> {@client_info.ein}</div>
+        </div>
+      </div>
+      
+<!-- Bill To -->
+      <div>
+        <div class="bg-teal-600 text-white p-2 mb-2">
+          <h3 class="font-bold text-sm">BILL TO</h3>
+        </div>
+        <div class="space-y-1 text-sm">
+          <div><span class="font-medium">Name</span> {@bill_to_info.name}</div>
+          <div><span class="font-medium">SWIFT/BIC:</span> {@bill_to_info.swift_bic}</div>
+          <div>
+            <span class="font-medium">Account Number:</span> {@bill_to_info.account_number}
+          </div>
+          <div><span class="font-medium">Bank Name:</span> {@bill_to_info.bank_name}</div>
+          <div class="text-xs">{@bill_to_info.bank_address}</div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Services Table -->
+    <div class="border border-gray-300">
+      <div class="grid grid-cols-4 bg-teal-600 text-white p-3 text-sm font-medium">
+        <div>DESCRIPTION</div>
+        <div class="text-center">HOURS</div>
+        <div class="text-center">RATE</div>
+        <div class="text-right">AMOUNT</div>
+      </div>
+      <div class="grid grid-cols-4 p-3 border-b border-gray-300">
+        <div>{@invoice.description}</div>
+        <div class="text-center">-</div>
+        <div class="text-center">-</div>
+        <div class="text-right font-bold">{format_currency(@invoice.amount)}</div>
+      </div>
+      <!-- Empty rows to match PDF -->
+      <div :for={_ <- 1..8} class="grid grid-cols-4 p-3 border-b border-gray-200">
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+      </div>
+      <div class="grid grid-cols-4 bg-blue-50 p-3 text-sm font-bold">
+        <div class="col-span-3 text-right">TOTAL</div>
+        <div class="text-right">{format_currency(@invoice.amount)}</div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

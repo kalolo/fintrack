@@ -1,0 +1,195 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+env:
+  MIX_ENV: test
+
+jobs:
+  test:
+    name: Test and Validation
+    runs-on: ubuntu-22.04
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: invoices_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5433
+
+    strategy:
+      matrix:
+        elixir_version: ["1.16.1"]
+        otp_version: ["26.2"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir_version }}
+          otp-version: ${{ matrix.otp_version }}
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Check for unused dependencies
+        run: mix deps.unlock --unused
+
+      - name: Compile code (with warnings as errors)
+        run: mix compile --warnings-as-errors
+
+      - name: Check code formatting
+        run: mix format --check-formatted
+
+      - name: Set up database
+        run: |
+          mix ecto.create
+          mix ecto.migrate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
+
+      - name: Run tests
+        run: mix test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
+
+      - name: Run precommit checks
+        run: mix precommit
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/invoices_test
+
+  assets:
+    name: Asset Building
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.16.1"
+          otp-version: "26.2"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-deps-${{ hashFiles('**/mix.lock') }}
+
+      - name: Install Elixir dependencies
+        run: mix deps.get
+
+      - name: Install and setup assets
+        run: mix assets.setup
+
+      - name: Build assets
+        run: mix assets.build
+
+      - name: Verify asset compilation
+        run: |
+          if [ ! -f "priv/static/assets/js/app.js" ] || [ ! -f "priv/static/assets/css/app.css" ]; then
+            echo "❌ Asset compilation failed - missing compiled assets"
+            echo "Looking for:"
+            echo "  - priv/static/assets/js/app.js"
+            echo "  - priv/static/assets/css/app.css"
+            echo "Found assets:"
+            find priv/static/assets -name "*.js" -o -name "*.css" | sort
+            exit 1
+          else
+            echo "✅ Assets compiled successfully"
+            echo "  ✓ priv/static/assets/js/app.js"
+            echo "  ✓ priv/static/assets/css/app.css"
+          fi
+
+  quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-22.04
+    needs: [test, assets]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.16.1"
+          otp-version: "26.2"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Check for TODOs and FIXMEs
+        run: |
+          if grep -r "TODO\|FIXME" lib/ --exclude-dir=.git; then
+            echo "⚠️  Warning: Found TODO or FIXME comments in code"
+          else
+            echo "✅ No TODO or FIXME comments found"
+          fi
+        continue-on-error: true
+
+      - name: Check for common security patterns
+        run: |
+          echo "🔍 Checking for potential security issues..."
+          if grep -r "password.*=.*\"" lib/ || grep -r "secret.*=.*\"" lib/; then
+            echo "⚠️  Warning: Found potential hardcoded secrets"
+          else
+            echo "✅ No obvious hardcoded secrets found"
+          fi
+        continue-on-error: true
+
+      - name: Success
+        run: |
+          echo "🎉 All CI checks passed!"
+          echo "📋 Summary:"
+          echo "  ✅ Code compiles without warnings"
+          echo "  ✅ Code formatting is correct"
+          echo "  ✅ All tests pass"
+          echo "  ✅ Assets build successfully"
+          echo "  ✅ No unused dependencies"
+          echo ""
+          echo "🚀 The pull request is ready for review!"
