@@ -138,6 +138,11 @@ Ensure you have the following installed on your system:
    - Install and setup frontend assets (`mix assets.setup`)
    - Build initial assets (`mix assets.build`)
 
+   **Note:** If you encounter asset building errors, manually install Node.js dependencies:
+   ```bash
+   cd assets && npm install && cd ..
+   ```
+
 4. **Load environment variables and start the Phoenix server**
    ```bash
    # Load environment variables
