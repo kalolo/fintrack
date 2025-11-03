@@ -158,11 +158,12 @@ defmodule Invoices.Billing do
     |> Repo.all()
     |> group_by_month()
     |> Enum.map(fn month_data ->
-      margin = if month_data.income > 0 do
-        (month_data.income - month_data.expenses) / month_data.income * 100
-      else
-        0
-      end
+      margin =
+        if month_data.income > 0 do
+          (month_data.income - month_data.expenses) / month_data.income * 100
+        else
+          0
+        end
 
       Map.put(month_data, :margin, margin)
     end)
