@@ -26,7 +26,7 @@ A modern financial management application built with Phoenix LiveView for managi
 ### Core Framework
 - **Phoenix Framework v1.8.1**: Modern web framework for Elixir
 - **Phoenix LiveView v1.1**: Real-time, interactive web applications
-- **Elixir v1.15+**: Functional programming language built on the Erlang VM
+- **Elixir v1.17+** / **OTP 27+**: Functional programming language built on the Erlang VM
 - **Ecto v3.13**: Database wrapper and query generator for Elixir
 - **Bandit v1.5**: HTTP server built on Thousand Island
 
@@ -65,13 +65,16 @@ A modern financial management application built with Phoenix LiveView for managi
 
 Ensure you have the following installed on your system:
 
-- **Elixir 1.15+** and **Erlang/OTP 25+**
+- **Elixir 1.17+** and **Erlang/OTP 27+**
   ```bash
   # macOS with Homebrew
   brew install elixir
-  
+
   # Ubuntu/Debian
   sudo apt-get install elixir
+
+  # Verify versions
+  elixir --version  # Should show 1.17+
   ```
 
 - **PostgreSQL 12+**
