@@ -15,7 +15,7 @@ defmodule ImportInvestments do
       start_date = ~D[2024-03-15]
 
       {:ok, investment} =
-        Invoices.Investments.create_investment(
+        FinTrack.Investments.create_investment(
           %{"name" => name, "initial_value" => initial_value},
           1
         )
@@ -28,7 +28,7 @@ defmodule ImportInvestments do
           value = String.replace(value_str, ",", "") |> String.to_float() |> Decimal.from_float()
 
           # captured_at = Date.add(~D[2022-01-01], index - 1)  # Assuming the first value corresponds to 2022-01-01
-          Invoices.Investments.add_value_capture(investment.id, %{
+          FinTrack.Investments.add_value_capture(investment.id, %{
             "captured_at" => captured_at,
             "value" => value
           })
