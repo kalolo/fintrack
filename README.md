@@ -181,9 +181,9 @@ Ensure you have the following installed on your system:
 
 The application includes several custom tasks:
 
-- **Create a new user**: `mix invoices.create_user EMAIL PASSWORD`
+- **Create a new user**: `mix fintrack.create_user EMAIL PASSWORD`
   ```bash
-  mix invoices.create_user user@example.com mypassword123
+  mix fintrack.create_user user@example.com mypassword123
   ```
 
 For other available custom tasks, check the `lib/mix/tasks/` directory.

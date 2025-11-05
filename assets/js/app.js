@@ -22,7 +22,7 @@ import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
-import {hooks as colocatedHooks} from "phoenix-colocated/invoices"
+import {hooks as colocatedHooks} from "phoenix-colocated/fintrack"
 import {IncomeExpenseChart, MonthlyChart, RatioChart, CumulativeChart, NetProfitChart, RoiChart, InvestmentsComparisonChart, PaymentMethodChart} from "./dashboard_hooks"
 import topbar from "../vendor/topbar"
 

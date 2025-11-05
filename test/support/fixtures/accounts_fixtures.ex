@@ -1,9 +1,9 @@
-defmodule Invoices.AccountsFixtures do
+defmodule FinTrack.AccountsFixtures do
   @moduledoc """
   This module defines test fixtures for Accounts context.
   """
 
-  alias Invoices.Accounts
+  alias FinTrack.Accounts
 
   @doc """
   Generate a user with a unique email.

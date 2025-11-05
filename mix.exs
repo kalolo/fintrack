@@ -1,9 +1,9 @@
-defmodule Invoices.MixProject do
+defmodule FinTrack.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :invoices,
+      app: :fintrack,
       version: "0.1.0",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -20,7 +20,7 @@ defmodule Invoices.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Invoices.Application, []},
+      mod: {FinTrack.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -88,10 +88,10 @@ defmodule Invoices.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind invoices", "esbuild invoices"],
+      "assets.build": ["compile", "tailwind fintrack", "esbuild fintrack"],
       "assets.deploy": [
-        "tailwind invoices --minify",
-        "esbuild invoices --minify",
+        "tailwind fintrack --minify",
+        "esbuild fintrack --minify",
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]

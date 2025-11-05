@@ -1,14 +1,14 @@
-defmodule Invoices.BillingFixtures do
+defmodule FinTrack.BillingFixtures do
   @moduledoc """
   This module defines test fixtures for Billing context.
   You can use it in your tests as:
-      use Invoices.DataCase
+      use FinTrack.DataCase
 
-      import Invoices.BillingFixtures
+      import FinTrack.BillingFixtures
   """
 
-  alias Invoices.Billing
-  import Invoices.AccountsFixtures
+  alias FinTrack.Billing
+  import FinTrack.AccountsFixtures
 
   @doc """
   Generate a transaction.
