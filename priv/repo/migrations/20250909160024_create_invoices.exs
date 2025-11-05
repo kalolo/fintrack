@@ -1,4 +1,4 @@
-defmodule Invoices.Repo.Migrations.CreateInvoices do
+defmodule FinTrack.Repo.Migrations.CreateInvoices do
   use Ecto.Migration
 
   def change do

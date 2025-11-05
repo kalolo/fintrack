@@ -1,4 +1,4 @@
-defmodule InvoicesWeb.ConnCase do
+defmodule FinTrackWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule InvoicesWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use InvoicesWeb.ConnCase, async: true`, although
+  by setting `use FinTrackWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -20,19 +20,19 @@ defmodule InvoicesWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint InvoicesWeb.Endpoint
+      @endpoint FinTrackWeb.Endpoint
 
-      use InvoicesWeb, :verified_routes
+      use FinTrackWeb, :verified_routes
 
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import InvoicesWeb.ConnCase
+      import FinTrackWeb.ConnCase
     end
   end
 
   setup tags do
-    Invoices.DataCase.setup_sandbox(tags)
+    FinTrack.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 
@@ -44,7 +44,7 @@ defmodule InvoicesWeb.ConnCase do
   It stores an updated connection and a registered user in the test context.
   """
   def register_and_log_in_user(%{conn: conn}) do
-    user = Invoices.AccountsFixtures.user_fixture()
+    user = FinTrack.AccountsFixtures.user_fixture()
     %{conn: log_in_user(conn, user), user: user}
   end
 

@@ -1,4 +1,4 @@
-defmodule Invoices.Repo.Migrations.CreateTransactionsFromExistingInvoices do
+defmodule FinTrack.Repo.Migrations.CreateTransactionsFromExistingInvoices do
   use Ecto.Migration
   import Ecto.Query
 
@@ -17,7 +17,7 @@ defmodule Invoices.Repo.Migrations.CreateTransactionsFromExistingInvoices do
           :updated_at
         ]
       )
-      |> Invoices.Repo.all()
+      |> FinTrack.Repo.all()
 
     IO.puts("Found #{length(invoices)} invoices to create transactions for...")
 
@@ -41,7 +41,7 @@ defmodule Invoices.Repo.Migrations.CreateTransactionsFromExistingInvoices do
         updated_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
       }
 
-      Invoices.Repo.insert_all("transactions", [transaction_attrs])
+      FinTrack.Repo.insert_all("transactions", [transaction_attrs])
     end)
 
     IO.puts(
@@ -55,6 +55,6 @@ defmodule Invoices.Repo.Migrations.CreateTransactionsFromExistingInvoices do
     from(t in "transactions",
       where: like(t.description, "Invoice % - %") and t.type == "income"
     )
-    |> Invoices.Repo.delete_all()
+    |> FinTrack.Repo.delete_all()
   end
 end
