@@ -1,0 +1,27 @@
+[Unit]
+Description=FinTrack Phoenix Application
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=fintrack
+Group=fintrack
+WorkingDirectory=/home/fintrack/app
+Environment=MIX_ENV=prod
+Environment=PORT=4000
+Environment=LANG=en_US.UTF-8
+
+# Load environment variables from file
+EnvironmentFile=/home/fintrack/app/.env
+
+ExecStart=/home/fintrack/app/bin/fintrack start
+ExecStop=/home/fintrack/app/bin/fintrack stop
+Restart=on-failure
+RestartSec=5
+RemainAfterExit=no
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fintrack
+
+[Install]
+WantedBy=multi-user.target

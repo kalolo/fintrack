@@ -49,3 +49,7 @@ npm-debug.log
 # Secrets and credentials
 config/*.secret.exs
 priv/cert/*.pem
+
+# Deployment artifacts
+*.tar.gz
+fintrack-*.tar.gz
